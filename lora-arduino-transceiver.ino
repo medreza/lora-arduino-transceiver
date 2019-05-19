@@ -5,12 +5,14 @@
 
 #define DHTPIN 0 //DHT pin D0
 #define DHTTYPE DHT11
-LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+LiquidCrystal lcd(8, 3, 4, 5, 6, 7);
 DHT dht(DHTPIN, DHTTYPE);
 
 void LoRaReceiveAndTampilkanLCD();
 int LoRaSend(String dataSensor);
-String receivedData = "none";
+String receivedData = "";
+String receivedDataTemp = "";
+String temp = "";
 String dataSensor;
 void setup() {
   lcd.begin(16, 2);
@@ -24,14 +26,20 @@ void setup() {
 }
 
 void loop() {
+  dataSensor = "";
   for (int i = 0;i<10000;i++) {
     LoRaReceiveAndTampilkanLCD();
   }
-  dataSensor = "";
+  dataSensor += "T:";
   dataSensor += dht.readTemperature();
-  dataSensor += "|";
+  dataSensor += " | H:";
   dataSensor += dht.readHumidity();
   LoRaSend(dataSensor);
+  //delay(2000);
+  lcd.setCursor(0,0);
+  lcd.print(dataSensor); 
+  lcd.setCursor(0,1);
+  lcd.print(receivedData); 
 delay(1000);
 }
 
@@ -44,14 +52,14 @@ void LoRaReceiveAndTampilkanLCD() {
     Serial.print("\nReceived packet '");
 
     while (LoRa.available()) {
-      receivedData = (char)LoRa.read();
-      Serial.print(receivedData);
+      temp = (char)LoRa.read();
+      Serial.print(temp);
+      receivedDataTemp += temp;
       //Serial.print((char)LoRa.read());
     }
-    /*delay(2000);
-    lcd.setCursor(0,0);
-    lcd.print(receivedData); 
-    delay(2000);*/
+    receivedData = receivedDataTemp ;
+    receivedDataTemp = "";
+
     Serial.print("' with RSSI ");
     Serial.println(LoRa.packetRssi());
   }
@@ -63,5 +71,6 @@ int LoRaSend(String data) {
   LoRa.print("Data: ");
   LoRa.print(data);
   LoRa.endPacket();
+  Serial.println(data);
 }
 
