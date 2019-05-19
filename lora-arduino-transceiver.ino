@@ -3,7 +3,7 @@
 #include <LiquidCrystal.h>
 #include <DHT.h>
 
-#define DHTPIN 0 //DHT pin D0
+#define DHTPIN A1 //DHT pin A1
 #define DHTTYPE DHT11
 LiquidCrystal lcd(8, 3, 4, 5, 6, 7);
 DHT dht(DHTPIN, DHTTYPE);
@@ -33,9 +33,9 @@ void loop() {
   for (int i = 0;i<20000;i++) {
     LoRaReceiveAndTampilkanLCD();
   }
-  dataSensor += "T:";
+  dataSensor += "T";
   dataSensor += dht.readTemperature();
-  dataSensor += " H:";
+  dataSensor += " H";
   dataSensor += dht.readHumidity();
   Serial.println("\nMode Sender");
   lcd.setCursor(15,0);
