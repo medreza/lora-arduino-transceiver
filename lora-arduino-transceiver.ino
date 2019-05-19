@@ -68,7 +68,6 @@ void LoRaReceiveAndTampilkanLCD() {
 int LoRaSend(String data) {
   Serial.print("Sending packet: ");
   LoRa.beginPacket();
-  LoRa.print("Data: ");
   LoRa.print(data);
   LoRa.endPacket();
   Serial.println(data);
