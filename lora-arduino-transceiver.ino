@@ -3,6 +3,7 @@
 #include <LiquidCrystal.h>
 #include <DHT.h>
 
+
 #define DHTPIN A1 //DHT pin A1
 #define DHTTYPE DHT11
 LiquidCrystal lcd(8, 3, 4, 5, 6, 7);
@@ -14,6 +15,10 @@ String receivedData = "";
 String receivedDataTemp = "";
 String temp = "";
 String dataSensor;
+int totData = 0;
+int tempTotTemp = 0;
+int tempTotHum = 0;
+
 void setup() {
   lcd.begin(16, 2);
   dht.begin();
@@ -44,14 +49,12 @@ void loop() {
   lcd.setCursor(0,0);
   lcd.print(dataSensor); 
   lcd.setCursor(0,1);
-  lcd.print(receivedData); 
+  lcd.print(receivedData);
   delay(1000);
   LoRaSend(dataSensor);
   delay(1000);
   LoRaSend(dataSensor);
 }
-
-
 
 
 void LoRaReceiveAndTampilkanLCD() {
@@ -67,11 +70,23 @@ void LoRaReceiveAndTampilkanLCD() {
     }
     receivedData = receivedDataTemp ;
     receivedDataTemp = "";
-
+    tempTotTemp += (receivedData.substring(1,3)).toInt();
+    tempTotHum += (receivedData.substring(5)).toInt();
+    totData++;
     Serial.print("' with RSSI ");
     Serial.println(LoRa.packetRssi());
-    lcd.setCursor(13,1);
+    lcd.setCursor(8,0);
     lcd.print(LoRa.packetRssi());
+    lcd.setCursor(11,0);
+    lcd.print("dB");
+    lcd.setCursor(8,1);
+    lcd.print("rT");
+    lcd.setCursor(10,1);
+    lcd.print(tempTotTemp/totData);
+    lcd.setCursor(12,1);
+    lcd.print("rH");
+    lcd.setCursor(14,1);
+    lcd.print(tempTotHum/totData);
   }
 }
 
@@ -82,4 +97,5 @@ int LoRaSend(String data) {
   LoRa.endPacket();
   Serial.println(data);
 }
+
 
