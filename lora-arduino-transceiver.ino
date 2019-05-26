@@ -34,9 +34,9 @@ void loop() {
     LoRaReceiveAndTampilkanLCD();
   }
   dataSensor += "T";
-  dataSensor += dht.readTemperature();
+  dataSensor += int(dht.readTemperature());
   dataSensor += " H";
-  dataSensor += dht.readHumidity();
+  dataSensor += int(dht.readHumidity());
   Serial.println("\nMode Sender");
   lcd.setCursor(15,0);
   lcd.print("S");
@@ -45,7 +45,10 @@ void loop() {
   lcd.print(dataSensor); 
   lcd.setCursor(0,1);
   lcd.print(receivedData); 
-delay(2000);
+  delay(1000);
+  LoRaSend(dataSensor);
+  delay(1000);
+  LoRaSend(dataSensor);
 }
 
 
@@ -67,6 +70,8 @@ void LoRaReceiveAndTampilkanLCD() {
 
     Serial.print("' with RSSI ");
     Serial.println(LoRa.packetRssi());
+    lcd.setCursor(13,1);
+    lcd.print(LoRa.packetRssi());
   }
 }
 
